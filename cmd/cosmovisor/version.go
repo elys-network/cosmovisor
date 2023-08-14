@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"cosmossdk.io/tools/cosmovisor"
+	"github.com/elys-network/cosmovisor"
 )
 
 func NewVersionCmd() *cobra.Command {
