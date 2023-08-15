@@ -1,6 +1,6 @@
 module cosmovisor
 
-replace cosmossdk.io/tools/cosmovisor@v1.3.0 => github.com/elys-network/cosmovisor
+replace cosmossdk.io/tools/cosmovisor => github.com/elys-network/cosmovisor v0.0.0
 
 go 1.20
 
