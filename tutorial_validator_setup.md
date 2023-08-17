@@ -162,12 +162,19 @@ Let’s start with installing it:
 
 Now we’ll create the relevant directories:
 
-<code>$ mkdir -p ~/.gaia/cosmovisor/genesis/bin</code>
-<code>$ mkdir -p ~/.gaia/cosmovisor/upgrades</code>
+<code>$ mkdir -p ~/.elys/cosmovisor/genesis/bin</code>
 
-And copy the current binary to that first directory:
+<code>$ mkdir -p ~/.elys/cosmovisor/upgrades</code>
 
-<code>$ cp ~/go/bin/gaiad ~/.gaia/cosmovisor/genesis/bin/</code>
+If you going to sync your node from scratch you have to [build](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#3-installing-and-running-the-node) Elys node with <code>v0.1.0</code> tag. And then copy the genesis binary into that first directory:
+
+<code>$ cp ~/go/bin/elysd ~/.elys/cosmovisor/genesis/bin/</code>
+
+**But if you decide** to use [chain's archive snapshot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync) for a quick start you have to build the latest binaries (currently, it's <code>v0.9.0</code>), which has to be placed into the cosmovisor `upgrades` folder.
+
+<code>$ mkdir -p $HOME/.elys/cosmovisor/upgrades/v0.9.0/bin</code>
+
+<code>$ cp $HOME/go/bin/elysd $HOME/.elys/cosmovisor/upgrades/v0.9.0/bin/</code>
 
 For now, that’s it. Let’s continue with the setup.
 
@@ -210,7 +217,7 @@ With your favorite text editor, open <code>$ .elys/config/config.toml</code> and
   If the node is purely a validator, the index is not required. Disabling it helps reduce the disk usage. If you intend to run an archive node or query historical data, keep it as it is.<br>
   <code>indexer = “null”</code>
 
-  Now edit <code>$ .gaia/config/app.toml</code>:
+  Now edit <code>$ .elys/config/app.toml</code>:
 
   **At the top of the file**<br>
   *Usually it is required to specify something here:*
@@ -225,31 +232,38 @@ With your favorite text editor, open <code>$ .elys/config/config.toml</code> and
   If you plan on providing a RPC to allow other operators to statesync from your node, you can configure this to make a snapshot every 2000 blocks for example. Else, leave it to 0.<br>
   <code>snapshot-interval = 0</code>
 
-  Lastly, we’ll create a systemd service to control the node:
+  Now we’ll create a systemd service `elys.service` to control the node via cosmovisor. First, create the local service file by executing the following:
+```
+tee $HOME/elys.service > /dev/null <<EOF      
+[Unit]
+Description=Elys Network node
+After=network-online.target
 
-  As **root** and with a text editor, open <code>/etc/systemd/system/elys.service</code> and type the following:
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) run start
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65535
+Environment="DAEMON_HOME=$HOME/.elys"
+Environment="DAEMON_NAME=elysd"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="UNSAFE_SKIP_BACKUP=true"
 
-    [Unit] 
-    Description=Elys Network node 
-    After=network.target
-    
-    [Service] 
-    Type=simple 
-    Restart=on-failure 
-    RestartSec=5 
-    User=elys 
-    ExecStart=/home/elys/go/bin/cosmovisor run start
-    LimitNOFILE=65535
-    Environment="DAEMON_NAME=elysd"
-    Environment="DAEMON_HOME=/home/elys/.elys"
-    Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
-    Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
-    Environment="UNSAFE_SKIP_BACKUP=true"
-    
-    [Install] 
-    WantedBy=multi-user.target
-
-Then save and exit the file.
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+Second, we'll create a symlink of this local file to the `/etc/systemd/system` using the **root** access:
+```
+sudo ln -s $HOME/elys.service /etc/systemd/system
+```
+And lastly, enable `elys` service file:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable elys.service
+```
 
 The *Environment* items instruct Cosmovisor how to perform. They are all self-explanatory except maybe these two items:
 
