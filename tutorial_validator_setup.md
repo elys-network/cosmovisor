@@ -165,11 +165,12 @@ Now we’ll create the relevant directories:
 <code>$ mkdir -p ~/.elys/cosmovisor/genesis/bin</code>
 <code>$ mkdir -p ~/.elys/cosmovisor/upgrades</code>
 
-And copy the current binary to that first directory:
+If you going to sync your node from scratch you have to [build](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#3-installing-and-running-the-node) Elys node with <code>v0.1.0</code> tag. And then copy the genesis binary to that first directory:
 
 <code>$ cp ~/go/bin/elysd ~/.elys/cosmovisor/genesis/bin/</code>
 
-It should be noted that if you decide to use [node's data balse snapsot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync)
+**It should be noted** that if you decide to use [node's data balse snapsot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync) you have to use latest binaries (currently, it's <code>v0.9.0</code>), which has to be placed into cosmovisor `upgrades` folder.
+
 
 For now, that’s it. Let’s continue with the setup.
 
