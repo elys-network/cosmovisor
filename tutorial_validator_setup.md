@@ -225,31 +225,38 @@ With your favorite text editor, open <code>$ .elys/config/config.toml</code> and
   If you plan on providing a RPC to allow other operators to statesync from your node, you can configure this to make a snapshot every 2000 blocks for example. Else, leave it to 0.<br>
   <code>snapshot-interval = 0</code>
 
-  Lastly, we’ll create a systemd service to control the node:
+  Now we’ll create a systemd service `elys.service` to control the node via cosmovisor. First, create the local service file by executing the following:
+```
+tee $HOME/elys.service > /dev/null <<EOF      
+[Unit]
+Description=Elys Network node
+After=network-online.target
 
-  As **root** and with a text editor, open <code>/etc/systemd/system/elys.service</code> and type the following:
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) run start
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65535
+Environment="DAEMON_HOME=$HOME/.elys"
+Environment="DAEMON_NAME=elysd"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="UNSAFE_SKIP_BACKUP=true"
 
-    [Unit] 
-    Description=Elys Network node 
-    After=network.target
-    
-    [Service] 
-    Type=simple 
-    Restart=on-failure 
-    RestartSec=5 
-    User=elys 
-    ExecStart=/home/elys/go/bin/cosmovisor run start
-    LimitNOFILE=65535
-    Environment="DAEMON_NAME=elysd"
-    Environment="DAEMON_HOME=/home/elys/.elys"
-    Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
-    Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
-    Environment="UNSAFE_SKIP_BACKUP=true"
-    
-    [Install] 
-    WantedBy=multi-user.target
-
-Then save and exit the file.
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+Second, we'll create a symlink of this local file to the `/etc/systemd/system` using the **root** access:
+```
+sudo ln -s $HOME/elys.service /etc/systemd/system
+```
+And lastly, enable `elys` service file:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable elys.service
+```
 
 The *Environment* items instruct Cosmovisor how to perform. They are all self-explanatory except maybe these two items:
 
