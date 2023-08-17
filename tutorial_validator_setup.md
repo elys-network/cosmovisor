@@ -170,7 +170,7 @@ If you going to sync your node from scratch you have to [build](https://github.c
 
 <code>$ cp ~/go/bin/elysd ~/.elys/cosmovisor/genesis/bin/</code>
 
-**But if you decide** to use [node's data balse snapsot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync) for a quick start you have to build the latest binaries (currently, it's <code>v0.9.0</code>), which has to be placed into the cosmovisor `upgrades` folder.
+**But if you decide** to use [chain's archive snapshot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync) for a quick start you have to build the latest binaries (currently, it's <code>v0.9.0</code>), which has to be placed into the cosmovisor `upgrades` folder.
 
 <code>$ mkdir -p $HOME/.elys/cosmovisor/upgrades/v0.9.0/bin</code>
 
