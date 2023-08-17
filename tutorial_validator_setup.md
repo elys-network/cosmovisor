@@ -162,12 +162,12 @@ Let’s start with installing it:
 
 Now we’ll create the relevant directories:
 
-<code>$ mkdir -p ~/.gaia/cosmovisor/genesis/bin</code>
-<code>$ mkdir -p ~/.gaia/cosmovisor/upgrades</code>
+<code>$ mkdir -p ~/.elys/cosmovisor/genesis/bin</code>
+<code>$ mkdir -p ~/.elys/cosmovisor/upgrades</code>
 
 And copy the current binary to that first directory:
 
-<code>$ cp ~/go/bin/gaiad ~/.gaia/cosmovisor/genesis/bin/</code>
+<code>$ cp ~/go/bin/elysd ~/.elys/cosmovisor/genesis/bin/</code>
 
 For now, that’s it. Let’s continue with the setup.
 
@@ -210,7 +210,7 @@ With your favorite text editor, open <code>$ .elys/config/config.toml</code> and
   If the node is purely a validator, the index is not required. Disabling it helps reduce the disk usage. If you intend to run an archive node or query historical data, keep it as it is.<br>
   <code>indexer = “null”</code>
 
-  Now edit <code>$ .gaia/config/app.toml</code>:
+  Now edit <code>$ .elys/config/app.toml</code>:
 
   **At the top of the file**<br>
   *Usually it is required to specify something here:*
