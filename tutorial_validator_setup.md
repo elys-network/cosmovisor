@@ -169,6 +169,8 @@ And copy the current binary to that first directory:
 
 <code>$ cp ~/go/bin/elysd ~/.elys/cosmovisor/genesis/bin/</code>
 
+It should be noted that if you decide to use [node's data balse snapsot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync)
+
 For now, that’s it. Let’s continue with the setup.
 
 ## **3.2 Initializing the node**
