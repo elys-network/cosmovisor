@@ -162,19 +162,12 @@ Let’s start with installing it:
 
 Now we’ll create the relevant directories:
 
-<code>$ mkdir -p ~/.elys/cosmovisor/genesis/bin</code>
-
+<code>$ mkdir -p ~/.elys/cosmovisor/genesis/bin</code><br>
 <code>$ mkdir -p ~/.elys/cosmovisor/upgrades</code>
 
-If you going to sync your node from scratch you have to [build](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#3-installing-and-running-the-node) Elys node with <code>v0.1.0</code> tag. And then copy the genesis binary into that first directory:
+And copy the current binary to that first directory:
 
 <code>$ cp ~/go/bin/elysd ~/.elys/cosmovisor/genesis/bin/</code>
-
-**But if you decide** to use [chain's archive snapshot](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-a-quicksync-snapshot) or use a [Statesync](https://github.com/svv28/cosmovisor/blob/main/tutorial_validator_setup.md#using-statesync) for a quick start you have to build the latest binaries (currently, it's <code>v0.9.0</code>), which has to be placed into the cosmovisor `upgrades` folder.
-
-<code>$ mkdir -p $HOME/.elys/cosmovisor/upgrades/v0.9.0/bin</code>
-
-<code>$ cp $HOME/go/bin/elysd $HOME/.elys/cosmovisor/upgrades/v0.9.0/bin/</code>
 
 For now, that’s it. Let’s continue with the setup.
 
@@ -187,7 +180,7 @@ This will create the relevant directories and files of the node.
 The "moniker" can be whatever you want, it is of no importance. The chain id, however, must be correct and adjusted to the network that you want to join (in this example, the first Elys testnet).<br>
 The following will be created under <code>/home/elys/</code>:
 
-<code>.elys 
+```.elys 
 ├── config 
 │ ├── addrbook.json 
 │ ├── app.toml 
@@ -197,7 +190,8 @@ The following will be created under <code>/home/elys/</code>:
 │ ├── node_key.json 
 │ └── priv_validator_key.json 
 └── data 
- └── priv_validator_state.json</code>
+ └── priv_validator_state.json
+```
 
 Before moving on to the creation of the validator, the node needs to be started and synchronized.<br>
 In most cases, the chain will have started long ago and catching up from block 1 would take ages.<br>
@@ -232,38 +226,35 @@ With your favorite text editor, open <code>$ .elys/config/config.toml</code> and
   If you plan on providing a RPC to allow other operators to statesync from your node, you can configure this to make a snapshot every 2000 blocks for example. Else, leave it to 0.<br>
   <code>snapshot-interval = 0</code>
 
-  Now we’ll create a systemd service `elys.service` to control the node via cosmovisor. First, create the local service file by executing the following:
-```
-tee $HOME/elys.service > /dev/null <<EOF      
-[Unit]
-Description=Elys Network node
-After=network-online.target
+  Now we’ll create a systemd service `elys.service` to control the node via cosmovisor.
+  As **root** and with a text editor, open <code>/etc/systemd/system/elys.service</code> and type the following:
 
-[Service]
-User=$USER
-ExecStart=$(which cosmovisor) run start
-Restart=on-failure
-RestartSec=10
-LimitNOFILE=65535
-Environment="DAEMON_HOME=$HOME/.elys"
-Environment="DAEMON_NAME=elysd"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
-Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
-Environment="UNSAFE_SKIP_BACKUP=true"
+```
+    [Unit] 
+    Description=Elys Network node 
+    After=network.target
 
-[Install]
-WantedBy=multi-user.target
-EOF
+    [Service] 
+    Type=simple 
+    Restart=on-failure 
+    RestartSec=5 
+    User=elys 
+    ExecStart=/home/elys/go/bin/cosmovisor run start
+    LimitNOFILE=65535
+    Environment="DAEMON_NAME=elysd"
+    Environment="DAEMON_HOME=/home/elys/.elys"
+    Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+    Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+    Environment="UNSAFE_SKIP_BACKUP=true"
+
+    [Install] 
+    WantedBy=multi-user.target
 ```
-Second, we'll create a symlink of this local file to the `/etc/systemd/system` using the **root** access:
-```
-sudo ln -s $HOME/elys.service /etc/systemd/system
-```
-And lastly, enable `elys` service file:
-```
-sudo systemctl daemon-reload
-sudo systemctl enable elys.service
-```
+
+Then save and exit the file.
+You can now start the node by running `systemctl start elys`, and check its activity with `journalctl -fu elys` (`f` stands for `follow`, `u` for `user`).
+
+You can also ensure that the service restarts automatically if the server reboots by running `systemctl enable elys.service`. 
 
 The *Environment* items instruct Cosmovisor how to perform. They are all self-explanatory except maybe these two items:
 
@@ -278,6 +269,8 @@ While not a likely situation, it is best to keep it to “false”.
 By default, Cosmovisor makes a full backup of the data folder when an upgrade takes place — if the upgrade fails and the data becomes corrupted, it allows to restore the backup and attempt the process again.
 However, this can take a long time and use up a lot of disk space.<br>
 This flag disables this backup.
+
+The `Restart` and `RestartSec` items ensure that if the node crashes for some reason (e.g. killed by the OS because the server ran out of memory), it will automatically attempt to restart after 5 seconds.
 
 ## **3.3 Upgrading**
 
@@ -362,7 +355,7 @@ Typically we take a height that is 2000 to 5000 blocks below the current one, in
 
    - The process can end in error, for example:
 
-  Something saying “_Tree must be empty_” → You may have attempted this earlier. Remove everything in <code>.gaia/data/</code> except _priv_validator_state.json_.
+  Something saying “_Tree must be empty_” → You may have attempted this earlier. Remove everything in <code>.elys/data/</code> except _priv_validator_state.json_.
 
   “_level=info msg=”failed to fetch and verify app hash” err=”failed to obtain the header at height #34136796: post failed: Post \”http://xx.xx.xx.xx:2
 6657\”: context deadline exceeded” module=statesync_” → restart the statesync configuration, selecting an earlier trusted height.
