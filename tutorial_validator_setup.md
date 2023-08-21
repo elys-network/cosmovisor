@@ -126,7 +126,7 @@ If you are running a baremetal server, this is done through <code>ufw</code>, as
 <code>ufw allow 26656</code>
 
 If you plan on providing RPC, GRPC or REST services, you will also need to allow 26657, 9090 and/or 1317, but you'll probably also need to set up a rate limiter to prevent abuse.<br>
-Heavy queries to these interfaces can put a significant burden on the server and if it is validator node, cause it to miss blocks. It is recommended to keep these ports closed in this case.
+Heavy queries to these interfaces can put a significant burden on the server and if it is a validator node, cause it to miss blocks. It is recommended to keep these ports closed in this case.
 
 # **3. Installing and running the node**
 
