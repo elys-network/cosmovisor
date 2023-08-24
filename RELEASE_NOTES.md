@@ -5,5 +5,5 @@ See the [CHANGELOG](https://github.com/cosmos/cosmos-sdk/blob/tools/cosmovisor/v
 ## Installation instructions
 
 ```go
-go install github.com/elys-network/cosmovisor@latest
+go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@latest
 ```
