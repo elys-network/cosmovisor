@@ -137,9 +137,9 @@ Now that everything is set, we can deploy the node, as the **elys** user.<br>
 <code>$ git clone https://github.com/elys-network/elys.git</code><br>
 <code>$ cd elys</code>
 
-- We need to install the correct version -- this needs to be checked in the documentation of Discord. Currently, it's <code>v0.9.0</code>:
+- We need to install the correct version -- this needs to be checked in the documentation of Discord. Currently, it's <code>v0.11.0</code>:
 
-  <code>git checkout v0.9.0</code>
+  <code>git checkout v0.11.0</code>
 
 - Now we can install the node:
 
@@ -286,6 +286,7 @@ For an upgrade called v1.0.0 (just an example. Ensure to use the actual upgrade 
     
     $ mkdir -p ~/.elys/cosmovisor/upgrades/v1.0.0/bin
     $ cp ~/elys/build/elysd ~/.elys/cosmovisor/upgrades/v1.0.0/bin/
+    $ echo "{}" > ~/.elys/cosmovisor/upgrades/v1.0.0/upgrade-info.json
 
 And that’s it. When the height is reached, Cosmovisor will automatically swap the binary and restart.
 
