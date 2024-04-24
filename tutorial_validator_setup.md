@@ -154,11 +154,11 @@ Once done, type <code>exit</code> or hit <code>Ctrl+d</code> to return to the **
 Cosmovisor is a tool developed by the Cosmos SDK team that allows nodes to be upgraded in a seamless and nearly completely automated fashion.<br>
 As it is important to upgrade the node on time to avoid being jailed, it is highly recommended to use Cosmovisor.
 
-The full documentation is [here](https://docs.cosmos.network/v0.45/run-node/cosmovisor.html) for reference.
+The full documentation is [here](https://docs.cosmos.network/v0.50/build/tooling/cosmovisor) for reference.
 
 Let’s start with installing it:
 
-<code>$ go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@latest</code>
+<code>$ go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@latest</code>
 
 Now we’ll create the relevant directories:
 
